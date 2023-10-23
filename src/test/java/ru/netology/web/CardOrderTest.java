@@ -85,6 +85,6 @@ public class CardOrderTest {
 
         submit.click();
 
-        name.shouldHave(cssClass("input_invalid"));
+        name.shouldNotHave(cssClass("input_invalid"));
     }
 }

@@ -3,8 +3,7 @@ package ru.netology.web;
 import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.Test;
 
-import static com.codeborne.selenide.Condition.cssClass;
-import static com.codeborne.selenide.Condition.partialText;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
@@ -40,7 +39,22 @@ public class CardOrderTest {
         agreement.click();
         submit.click();
 
-        name.shouldHave(cssClass("input_invalid"));
+        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+    }
+
+    @Test
+    void shouldFailOnEmptyName() {
+        open("http://localhost:9999");
+
+        SelenideElement phone = $("[data-test-id=phone]");
+        SelenideElement agreement = $("[data-test-id=agreement]");
+        SelenideElement submit = $("form.form button.button");
+
+        phone.$("input").setValue("+79270000000");
+        agreement.click();
+        submit.click();
+
+        $("[data-test-id=name].input_invalid .input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
     }
 
     @Test
@@ -57,7 +71,22 @@ public class CardOrderTest {
         agreement.click();
         submit.click();
 
-        phone.shouldHave(cssClass("input_invalid"));
+        $("[data-test-id=phone].input_invalid .input__sub").shouldHave(exactText("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678."));
+    }
+
+    @Test
+    void shouldFailOnEmptyPhone() {
+        open("http://localhost:9999");
+
+        SelenideElement name = $("[data-test-id=name]");
+        SelenideElement agreement = $("[data-test-id=agreement]");
+        SelenideElement submit = $("form.form button.button");
+
+        name.$("input").setValue("Василий");
+        agreement.click();
+        submit.click();
+
+        $("[data-test-id=phone].input_invalid .input__sub").shouldHave(exactText("Поле обязательно для заполнения"));
     }
 
     @Test
@@ -74,17 +103,5 @@ public class CardOrderTest {
         submit.click();
 
         agreement.shouldHave(cssClass("input_invalid"));
-    }
-
-    @Test
-    void shouldFailOnAllFieldsEmpty() {
-        open("http://localhost:9999");
-
-        SelenideElement name = $("[data-test-id=name]");
-        SelenideElement submit = $("form.form button.button");
-
-        submit.click();
-
-        name.shouldHave(cssClass("input_invalid"));
     }
 }
